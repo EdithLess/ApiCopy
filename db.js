@@ -52,9 +52,29 @@ function getUsers() {
     });
 }
 
+function addProduct({ title, price, description, images, creationAt, updatedAt }) {
+    return new Promise((resolve, reject) => {
+        const query = `
+            INSERT INTO "Products" (title, price, description, images, "creationAt", "updatedAt")
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING *;
+        `;
+        const values = [title, price, description, images, creationAt, updatedAt];
+        
+        client.query(query, values, (err, res) => {
+            if (!err) {
+                resolve(res.rows[0]);
+            } else {
+                console.log(err.message);
+                reject(err);
+            }
+        });
+    });
+}
 
 module.exports = {
     getCategories,
     getProducts,
-    getUsers
+    getUsers,
+    addProduct
 };
