@@ -72,9 +72,58 @@ function addProduct({ title, price, description, images, creationAt, updatedAt }
     });
 }
 
+function updateProductById(id, fieldsToUpdate) {
+    return new Promise((resolve, reject) => {
+        // Динамічно формуємо запит для оновлення на основі полів, які потрібно змінити
+        const setClause = Object.keys(fieldsToUpdate)
+            .map((key, index) => `"${key}" = $${index + 2}`)
+            .join(', ');
+
+        const query = `
+            UPDATE "Products"
+            SET ${setClause}
+            WHERE id = $1
+            RETURNING *;
+        `;
+        const values = [id, ...Object.values(fieldsToUpdate)];
+
+        client.query(query, values, (err, res) => {
+            if (!err) {
+                resolve(res.rows[0]);
+            } else {
+                console.log(err.message);
+                reject(err);
+            }
+        });
+    });
+}
+
+function deleteProductById(id) {
+    return new Promise((resolve, reject) => {
+        const query = `
+            DELETE FROM "Products"
+            WHERE id = $1
+            RETURNING *;
+        `;
+        const values = [id];
+
+        client.query(query, values, (err, res) => {
+            if (!err) {
+                // Повертаємо видалений продукт, якщо знайдено і видалено
+                resolve(res.rows[0]);
+            } else {
+                console.log(err.message);
+                reject(err);
+            }
+        });
+    });
+}
+
 module.exports = {
     getCategories,
     getProducts,
     getUsers,
-    addProduct
+    addProduct,
+    updateProductById,
+    deleteProductById
 };

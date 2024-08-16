@@ -1,6 +1,6 @@
 const {Router} = require("express")
 const router=Router()
-const {getProducts, addProduct} = require("../db")
+const {getProducts, addProduct, updateProductById,deleteProductById} = require("../db")
 let productsData = [];
 
 async function fetchData() {
@@ -144,16 +144,24 @@ router.get("/products/:id",(req,res)=>{
  *       200:
  *         description: The updated product.
  */
-router.patch('/products/:id',(req,res)=>{
-    const {id} =req.params
-    const {body} =req
-    const parsedId= parseInt(id)
-    if(isNaN(parsedId)) return res.sendStatus(400)
-    const findProduct = productsData.findIndex((product)=>product.id === parsedId)
-if(findProduct ===-1)return res.sendStatus(404)
-    const found = productsData[findProduct] = {...productsData[findProduct],...body}
-res.status(200).json(found)
-})
+router.patch('/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { body } = req;
+
+        const parsedId = parseInt(id);
+        if (isNaN(parsedId)) return res.sendStatus(400); // Перевірка, чи id є числом
+
+        const updatedProduct = await updateProductById(parsedId, body); // Виклик функції оновлення продукту
+
+        if (!updatedProduct) return res.sendStatus(404); // Якщо продукт не знайдено, повертаємо 404
+
+        res.status(200).json(updatedProduct); // Повертаємо оновлений продукт
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Failed to update product' });
+    }
+});
 
 //Видалення елементу в products
 /**
@@ -172,11 +180,27 @@ res.status(200).json(found)
  *       200:
  *         description: Successfully deleted.
  */
-router.delete('/products/:id',(req,res)=>{
-    const {id} =req.params
-    const parsedId= parseInt(id)
-    const findProduct = productsData.findIndex((product)=>product.id === parsedId)
-    productsData.splice(findProduct, 1)
-    return res.sendStatus(200)
-})
+router.delete('/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const parsedId = parseInt(id);
+
+        if (isNaN(parsedId)) {
+            return res.status(400).json({ error: 'Invalid product ID' });
+        }
+
+        const deletedProduct = await deleteProductById(parsedId);
+
+        if (!deletedProduct) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        return res.status(200).json({ message: 'Product deleted successfully', product: deletedProduct });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({ error: 'Failed to delete product' });
+    }
+});
+
+
 module.exports =router
