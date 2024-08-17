@@ -1,7 +1,7 @@
 const {Router} = require("express")
 const express=require("express")
 const router=Router()
-const {getCategories} = require("../db")
+const {getCategories, getCategorytById, addCategory, updateCategoryById,deleteCategoryById} = require("../db")
 let categoriesData = [];
 
 
@@ -23,8 +23,8 @@ fetchData()
  *       200:
  *         description: A list of categories.
  */
-router.get("/categories",(req,res)=>{
-    res.status(200).json(categoriesData)
+router.get("/categories",async (req,res)=>{
+    res.status(200).json(await getCategories())
 })
 
 //Виведення однієї категорії
@@ -44,10 +44,22 @@ router.get("/categories",(req,res)=>{
  *       200:
  *         description: A single category.
  */
-router.get("/categories/:id",(req,res)=>{
-    const {id} = req.params
-    res.status(200).json(categoriesData[id])
- })
+router.get("/categories/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const category = await getCategorytById(id);
+
+        if (!category) {
+            return res.status(404).json({ error: "Category not found" });
+        }
+
+        res.status(200).json(category);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: "Failed to retrieve category" });
+    }
+});
 
  //Додавання категорій
 /**
@@ -68,12 +80,21 @@ router.get("/categories/:id",(req,res)=>{
  *       200:
  *         description: The created category.
  */
- router.post('/categories',(req,res)=>{
-    const newId=categoriesData[categoriesData.length-1].id+1
-   const {body} = req
-   const newProduct = {id: newId, ...body}
-   categoriesData.push(newProduct)
-   res.status(200).json(categoriesData)
+ router.post('/categories', async (req,res)=>{
+    try {
+        const { name, image,creationAt, updatedAt  } = req.body;
+        await addCategory({
+            name,
+            image,
+            creationAt,
+            updatedAt 
+        });
+
+        res.status(201).json({ message: 'Category added successfully' });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Failed to add product' });
+    }
 })
 
 //Оновлення поля даних в categories
@@ -102,15 +123,23 @@ router.get("/categories/:id",(req,res)=>{
  *       200:
  *         description: The updated category.
  */
-router.patch('/categories/:id',(req,res)=>{
-    const {id} =req.params
-    const {body} =req
-    const parsedId= parseInt(id)
-    if(isNaN(parsedId)) return res.sendStatus(400)
-    const findCategory = categoriesData.findIndex((category)=>category.id === parsedId)
-if(findCategory ===-1)return res.sendStatus(404)
-    const found = categoriesData[findCategory] = {...categoriesData[findCategory],...body}
-res.status(200).json(found)
+router.patch('/categories/:id',async (req,res)=>{
+    try {
+        const { id } = req.params;
+        const { body } = req;
+
+        const parsedId = parseInt(id);
+        if (isNaN(parsedId)) return res.sendStatus(400); // Перевірка, чи id є числом
+
+        const updatedCategory = await updateCategoryById(parsedId, body); // Виклик функції оновлення продукту
+
+        if (!updatedCategory) return res.sendStatus(404); // Якщо продукт не знайдено, повертаємо 404
+
+        res.status(200).json(updatedCategory); // Повертаємо оновлений продукт
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Failed to update category' });
+    }
 })
 
 /**
@@ -129,12 +158,26 @@ res.status(200).json(found)
  *       200:
  *         description: Successfully deleted.
  */
-router.delete('/categories/:id',(req,res)=>{
-    const {id} =req.params
-    const parsedId= parseInt(id)
-    const findCategory = categoriesData.findIndex((category)=>category.id === parsedId)
-    categoriesData.splice(findCategory, 1)
-    return res.sendStatus(200)
+router.delete('/categories/:id',async (req,res)=>{
+    try {
+        const { id } = req.params;
+        const parsedId = parseInt(id);
+
+        if (isNaN(parsedId)) {
+            return res.status(400).json({ error: 'Invalid product ID' });
+        }
+
+        const deletedCategory = await deleteCategoryById(parsedId);
+
+        if (!deletedCategory) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        return res.status(200).json({ message: 'Product deleted successfully', category: deletedCategory });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({ error: 'Failed to delete product' });
+    }
 })
 
 

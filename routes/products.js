@@ -1,6 +1,6 @@
 const {Router} = require("express")
 const router=Router()
-const {getProducts, addProduct, updateProductById,deleteProductById} = require("../db")
+const {getProducts,getProductById, addProduct, updateProductById,deleteProductById} = require("../db")
 let productsData = [];
 
 async function fetchData() {
@@ -39,8 +39,8 @@ fetchData()
  *                     type: number
  *                     example: 69.99
  */
-router.get("/products",(req,res)=>{
-    res.status(200).json(productsData)
+router.get("/products",async (req,res)=>{
+    res.status(200).json(await getProducts())
 })
 
 /**
@@ -59,10 +59,22 @@ router.get("/products",(req,res)=>{
  *       200:
  *         description: A single product.
  */
-router.get("/products/:id",(req,res)=>{
-    const {id} = req.params
-    res.status(200).json(productsData[id])
- })
+router.get("/products/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const product = await getProductById(id);
+
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+
+        res.status(200).json(product);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: "Failed to retrieve product" });
+    }
+});
 
  /**
  * @swagger
