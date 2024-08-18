@@ -1,6 +1,48 @@
 require("dotenv").config()
+const {sql} =require("@vercel/postgres")
 const pg =require("pg")
 
+
+async function seedProducts() {
+    try {
+      await sql`
+        CREATE TABLE IF NOT EXISTS "Products" (
+          id SERIAL PRIMARY KEY,
+          title VARCHAR(255) NOT NULL,
+          price DECIMAL NOT NULL,
+          description TEXT NOT NULL,
+          images TEXT[] NOT NULL,
+          creationAt TIMESTAMP NOT NULL,
+          updatedAt TIMESTAMP NOT NULL)`;
+      console.log("Table created successfully");
+    } catch (error) {
+      console.error("Error creating table:", error);
+    }
+  }
+
+  async function insertCategory() {
+    try {
+      // Замініть ці дані на ті, які хочете вставити
+      const name = "Electronics";
+      const image = "https://example.com/electronics.jpg";
+      const creationAt = new Date();
+      const updatedAt = new Date();
+  
+      // Виконання запиту на вставку
+      await sql`
+        INSERT INTO "Categories" (name, image, creationAt, updatedAt)
+        VALUES (${name}, ${image}, ${creationAt}, ${updatedAt})
+      `;
+      console.log("Category inserted successfully");
+    } catch (error) {
+      console.error("Error inserting category:", error);
+    }
+  }
+  
+  insertCategory();
+  
+  
+  seedProducts();
 const { Pool } = pg;
 const pool = new Pool({
     host: "localhost",
