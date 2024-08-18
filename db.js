@@ -3,12 +3,11 @@ const pg =require("pg")
 
 const { Pool } = pg;
 const pool = new Pool({
-    connectionString: process.env.POSTGRES_URL,
-    // host: "localhost",
-    // user: "postgres",
-    // port: 5432,
-    // password: "bond007008",
-    // database: "E-shop",
+    host: "localhost",
+    user: "postgres",
+    port: 5432,
+    password: "bond007008",
+    database: "E-shop",
     
 })
 
