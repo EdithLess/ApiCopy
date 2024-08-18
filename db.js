@@ -1,19 +1,21 @@
 require("dotenv").config()
-const pg =require("pg")
-
-const { Pool } = pg;
-
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-})
 const { Client } = require('pg');
+// const pg=require('pg')
+
+// const { Pool } = pg;
+
+// const pool = new Pool({
+//   connectionString: process.env.POSTGRES_URL,
+// })
 
 const client = new Client({
     host: "localhost",
     user: "postgres",
     port: 5432,
     password: "bond007008",
-    database: "E-shop"
+    database: "E-shop",
+    connectionString: process.env.POSTGRES_URL,
+    
 });
 
 client.connect();
@@ -249,5 +251,4 @@ module.exports = {
     updateCategoryById,
     deleteProductById,
     deleteCategoryById,
-    pool
 };
