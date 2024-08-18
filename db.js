@@ -50,8 +50,6 @@ const pool = new Pool({
     port: 5432,
     password: "bond007008",
     database: "E-shop",
-    connectionString: process.env.DATABASE_URL,
-    
     
 })
 
