@@ -1,28 +1,22 @@
 require("dotenv").config()
-const { Client } = require('pg');
-// const pg=require('pg')
+const pg =require("pg")
 
-// const { Pool } = pg;
-
-// const pool = new Pool({
-//   connectionString: process.env.POSTGRES_URL,
-// })
-
-const client = new Client({
-    host: "localhost",
-    user: "postgres",
-    port: 5432,
-    password: "bond007008",
-    database: "E-shop",
+const { Pool } = pg;
+const pool = new Pool({
     connectionString: process.env.POSTGRES_URL,
+    // host: "localhost",
+    // user: "postgres",
+    // port: 5432,
+    // password: "bond007008",
+    // database: "E-shop",
     
-});
+})
 
-client.connect();
+pool.connect();
 
 function getCategories() {
     return new Promise((resolve, reject) => {
-        client.query(`SELECT * FROM Categories`, (err, res) => {
+        pool.query(`SELECT * FROM Categories`, (err, res) => {
             if (!err) {
                 const result = res.rows;
                 resolve(result);
@@ -36,7 +30,7 @@ function getCategories() {
 
 function getProducts() {
     return new Promise((resolve, reject) => {
-        client.query(`SELECT * FROM "Products"`, (err, res) => {
+        pool.query(`SELECT * FROM "Products"`, (err, res) => {
             if (!err) {
                 const result = res.rows;
                 resolve(result);
@@ -53,7 +47,7 @@ function getProductById(id) {
         const query = `SELECT * FROM "Products" WHERE id = $1`;
         const values = [id];
 
-        client.query(query, values, (err, res) => {
+        pool.query(query, values, (err, res) => {
             if (!err) {
                 if (res.rows.length > 0) {
                     resolve(res.rows[0]);
@@ -73,7 +67,7 @@ function getCategorytById(id) {
         const query = `SELECT * FROM "categories" WHERE id = $1`;
         const values = [id];
 
-        client.query(query, values, (err, res) => {
+        pool.query(query, values, (err, res) => {
             if (!err) {
                 if (res.rows.length > 0) {
                     resolve(res.rows[0]);
@@ -90,7 +84,7 @@ function getCategorytById(id) {
 
 function getUsers() {
     return new Promise((resolve, reject) => {
-        client.query(`SELECT * FROM "users"`, (err, res) => {
+        pool.query(`SELECT * FROM "users"`, (err, res) => {
             if (!err) {
                 const result = res.rows;
                 resolve(result);
@@ -111,7 +105,7 @@ function addProduct({ title, price, description, images, creationAt, updatedAt }
         `;
         const values = [title, price, description, images, creationAt, updatedAt];
         
-        client.query(query, values, (err, res) => {
+        pool.query(query, values, (err, res) => {
             if (!err) {
                 resolve(res.rows[0]);
             } else {
@@ -131,7 +125,7 @@ function addCategory({ name, image, creationAt, updatedAt }) {
         `;
         const values = [name, image,creationAt, updatedAt ];
         
-        client.query(query, values, (err, res) => {
+        pool.query(query, values, (err, res) => {
             if (!err) {
                 resolve(res.rows[0]);
             } else {
@@ -157,7 +151,7 @@ function updateProductById(id, fieldsToUpdate) {
         `;
         const values = [id, ...Object.values(fieldsToUpdate)];
 
-        client.query(query, values, (err, res) => {
+        pool.query(query, values, (err, res) => {
             if (!err) {
                 resolve(res.rows[0]);
             } else {
@@ -183,7 +177,7 @@ function updateCategoryById(id, fieldsToUpdate) {
         `;
         const values = [id, ...Object.values(fieldsToUpdate)];
 
-        client.query(query, values, (err, res) => {
+        pool.query(query, values, (err, res) => {
             if (!err) {
                 resolve(res.rows[0]);
             } else {
@@ -206,7 +200,7 @@ function deleteProductById(id) {
         `;
         const values = [id];
 
-        client.query(query, values, (err, res) => {
+        pool.query(query, values, (err, res) => {
             if (!err) {
                 // Повертаємо видалений продукт, якщо знайдено і видалено
                 resolve(res.rows[0]);
@@ -227,7 +221,7 @@ function deleteCategoryById(id) {
         `;
         const values = [id];
 
-        client.query(query, values, (err, res) => {
+        pool.query(query, values, (err, res) => {
             if (!err) {
                 // Повертаємо видалений продукт, якщо знайдено і видалено
                 resolve(res.rows[0]);
@@ -251,4 +245,5 @@ module.exports = {
     updateCategoryById,
     deleteProductById,
     deleteCategoryById,
+    pool
 };
