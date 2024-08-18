@@ -1,18 +1,17 @@
-const PORT = 5000
-//Routers
+require("dotenv").config()
+const PORT = process.env.PORT || 3000;
+
 const productsRouter=require("./routes/products")
 const categoriesRouter=require("./routes/categories")
 const homeRouter=require("./routes/homepage")
 const loginRouter=require("./routes/login")
-//libraries
+
 const express=require("express")
 const app= express()
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerConfig');
 const cookieParser=require('cookie-parser')
 
-
-//middleware 
 app.use(express.urlencoded({
     extended:true
 }))

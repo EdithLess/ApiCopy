@@ -2,17 +2,7 @@ const {Router} = require("express")
 const express=require("express")
 const router=Router()
 const {getCategories, getCategorytById, addCategory, updateCategoryById,deleteCategoryById} = require("../db")
-let categoriesData = [];
 
-
-async function fetchData() {
-    try {
-        categoriesData = await getCategories();
-    } catch (err) {
-        console.error(err);
-    }
-}
-fetchData()
 
 /**
  * @swagger

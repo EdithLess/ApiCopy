@@ -1,18 +1,6 @@
 const {Router} = require("express")
 const router=Router()
 const {getProducts,getProductById, addProduct, updateProductById,deleteProductById} = require("../db")
-let productsData = [];
-
-async function fetchData() {
-    try {
-        productsData = await getProducts();
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-fetchData()
-
 
 /**
  * @swagger
