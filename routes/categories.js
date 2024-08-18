@@ -1,7 +1,7 @@
 const {Router} = require("express")
 const express=require("express")
 const router=Router()
-const {getCategories, getCategorytById, addCategory, updateCategoryById,deleteCategoryById} = require("../db")
+const {getAllCategories, getCategorytById, addCategory, updateCategoryById,deleteCategoryById} = require("../db")
 
 
 /**
@@ -13,9 +13,14 @@ const {getCategories, getCategorytById, addCategory, updateCategoryById,deleteCa
  *       200:
  *         description: A list of categories.
  */
-router.get("/categories",async (req,res)=>{
-    res.status(200).json(await getCategories())
-})
+router.get("/categories", async (req, res) => {
+    try {
+      const categories = await getAllCategories();
+      res.status(200).json(categories);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch categories" });
+    }
+  });
 
 //Виведення однієї категорії
 /**

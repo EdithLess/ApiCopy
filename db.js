@@ -39,10 +39,7 @@ async function seedProducts() {
     }
   }
   
-  insertCategory();
-  
-  
-  seedProducts();
+
 // const { Pool } = pg;
 // const pool = new Pool({
 //     host: "localhost",
@@ -55,19 +52,22 @@ async function seedProducts() {
 
 // pool.connect();
 
-// function getCategories() {
-//     return new Promise((resolve, reject) => {
-//         pool.query(`SELECT * FROM Categories`, (err, res) => {
-//             if (!err) {
-//                 const result = res.rows;
-//                 resolve(result);
-//             } else {
-//                 console.log(err.message);
-//                 reject(err);
-//             }
-//         });
-//     });
-// }
+async function getAllCategories() {
+  try {
+    // Виконання запиту на отримання всіх рядків з таблиці "Categories"
+    const result = await sql`
+      SELECT * FROM "Categories"
+    `;
+
+    // Виведення та повернення лише рядків з результату запиту
+    const categories = result.rows;
+    console.log("Categories:", categories);
+    return categories;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    throw error;
+  }
+}
 
 // function getProducts() {
 //     return new Promise((resolve, reject) => {
@@ -274,8 +274,8 @@ async function seedProducts() {
 //     });
 // }
 
-// module.exports = {
-//     getCategories,
+module.exports = {
+  getAllCategories
 //     getProducts,
 //     getProductById,
 //     getCategorytById,
@@ -286,4 +286,4 @@ async function seedProducts() {
 //     updateCategoryById,
 //     deleteProductById,
 //     deleteCategoryById,
-// };
+};
