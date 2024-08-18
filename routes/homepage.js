@@ -2,7 +2,7 @@ const {Router} = require("express")
 const router=Router()
 
 router.get('/',(req,res)=>{
-    res.render(`<!DOCTYPE html>
+    res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
