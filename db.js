@@ -3,41 +3,68 @@ const {sql} =require("@vercel/postgres")
 const pg =require("pg")
 
 
-async function seedProducts() {
-    try {
-      await sql`
-        CREATE TABLE IF NOT EXISTS "Products" (
-          id SERIAL PRIMARY KEY,
-          title VARCHAR(255) NOT NULL,
-          price DECIMAL NOT NULL,
-          description TEXT NOT NULL,
-          images TEXT[] NOT NULL,
-          creationAt TIMESTAMP NOT NULL,
-          updatedAt TIMESTAMP NOT NULL)`;
-      console.log("Table created successfully");
-    } catch (error) {
-      console.error("Error creating table:", error);
-    }
-  }
+// async function seedProducts() {
+//     try {
+//       await sql`
+//         CREATE TABLE IF NOT EXISTS "Products" (
+//           id SERIAL PRIMARY KEY,
+//           title VARCHAR(255) NOT NULL,
+//           price DECIMAL NOT NULL,
+//           description TEXT NOT NULL,
+//           images TEXT[] NOT NULL,
+//           creationAt TIMESTAMP NOT NULL,
+//           updatedAt TIMESTAMP NOT NULL)`;
+//       console.log("Table created successfully");
+//     } catch (error) {
+//       console.error("Error creating table:", error);
+//     }
+//   }
 
-  async function insertCategory() {
-    try {
-      // Замініть ці дані на ті, які хочете вставити
-      const name = "Electronics";
-      const image = "https://example.com/electronics.jpg";
-      const creationAt = new Date();
-      const updatedAt = new Date();
-  
-      // Виконання запиту на вставку
-      await sql`
-        INSERT INTO "Categories" (name, image, creationAt, updatedAt)
-        VALUES (${name}, ${image}, ${creationAt}, ${updatedAt})
-      `;
-      console.log("Category inserted successfully");
-    } catch (error) {
-      console.error("Error inserting category:", error);
-    }
+async function insertProducts() {
+  try {
+    // Замініть ці дані на ті, які хочете вставити
+    const title = "Classic Heather Gray Hoodie";
+    const price = 69
+    const description = "Stay cozy and stylish with our Classic Heather Gray Hoodie. Crafted from soft, durable fabric, it features a kangaroo pocket"
+    const images =[
+      "https://i.imgur.com/cHddUCu.jpeg",
+      "https://i.imgur.com/CFOjAgK.jpeg",
+      "https://i.imgur.com/wbIMMme.jpeg"
+  ]
+  const creationAt="2024-07-27T06:55:37.000Z"
+  const updatedAt="2024-07-27T06:55:37.000Z"
+
+
+    // Виконання запиту на вставку
+    await sql`
+      INSERT INTO "Products" (title, price, description, images, creationAt, updatedAt)
+      VALUES (${title}, ${price}, ${description}, ${images}, ${creationAt},${updatedAt})
+    `;
+    console.log("Category inserted successfully");
+  } catch (error) {
+    console.error("Error inserting category:", error);
   }
+}
+
+
+//   async function insertCategory() {
+//     try {
+//       // Замініть ці дані на ті, які хочете вставити
+//       const name = "Electronics";
+//       const image = "https://example.com/electronics.jpg";
+//       const creationAt = new Date();
+//       const updatedAt = new Date();
+  
+//       // Виконання запиту на вставку
+//       await sql`
+//         INSERT INTO "Categories" (name, image, creationAt, updatedAt)
+//         VALUES (${name}, ${image}, ${creationAt}, ${updatedAt})
+//       `;
+//       console.log("Category inserted successfully");
+//     } catch (error) {
+//       console.error("Error inserting category:", error);
+//     }
+//   }
   
 
 // const { Pool } = pg;
@@ -69,19 +96,23 @@ async function getAllCategories() {
   }
 }
 
-// function getProducts() {
-//     return new Promise((resolve, reject) => {
-//         pool.query(`SELECT * FROM "Products"`, (err, res) => {
-//             if (!err) {
-//                 const result = res.rows;
-//                 resolve(result);
-//             } else {
-//                 console.log(err.message);
-//                 reject(err);
-//             }
-//         });
-//     });
-// }
+
+async function getAllProducts() {
+  try {
+    // Виконання запиту на отримання всіх рядків з таблиці "Categories"
+    const result = await sql`
+      SELECT * FROM "Products"
+    `;
+
+    // Виведення та повернення лише рядків з результату запиту
+    const products = result.rows;
+    console.log("Products:", categories);
+    return products;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+}
 
 // function getProductById(id) {
 //     return new Promise((resolve, reject) => {
@@ -275,7 +306,8 @@ async function getAllCategories() {
 // }
 
 module.exports = {
-  getAllCategories
+  getAllCategories,
+  getAllProducts
 //     getProducts,
 //     getProductById,
 //     getCategorytById,

@@ -1,6 +1,6 @@
 const {Router} = require("express")
 const router=Router()
-const {getProducts,getProductById, addProduct, updateProductById,deleteProductById} = require("../db")
+const {getAllProducts,getProductById, addProduct, updateProductById,deleteProductById} = require("../db")
 
 /**
  * @swagger
@@ -27,9 +27,14 @@ const {getProducts,getProductById, addProduct, updateProductById,deleteProductBy
  *                     type: number
  *                     example: 69.99
  */
-router.get("/products",async (req,res)=>{
-    res.status(200).json(await getProducts())
-})
+router.get("/products", async (req, res) => {
+    try {
+      const products = await getAllProducts();
+      res.status(200).json(products);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch products" });
+    }
+  });
 
 /**
  * @swagger
