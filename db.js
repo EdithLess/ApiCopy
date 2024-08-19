@@ -106,7 +106,7 @@ async function getAllProducts() {
 
     // Виведення та повернення лише рядків з результату запиту
     const products = result.rows;
-    console.log("Products:", categories);
+    console.log("Products:", products);
     return products;
   } catch (error) {
     console.error("Error fetching products:", error);
