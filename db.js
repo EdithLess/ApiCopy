@@ -20,31 +20,31 @@ const pg =require("pg")
 //     }
 //   }
 
-async function insertProducts() {
-  try {
-    // Замініть ці дані на ті, які хочете вставити
-    const title = "Classic Black Hooded Sweatshirt";
-    const price = 79
-    const description = "Elevate your casual wardrobe with our Classic Black Hooded Sweatshirt. Made from high-quality, soft fabric that ensures comfort and durability."
-    const images =[
-    "https://i.imgur.com/cSytoSD.jpeg",
-            "https://i.imgur.com/WwKucXb.jpeg",
-            "https://i.imgur.com/cE2Dxh9.jpeg"
-  ]
-  const creationAt="2024-07-27T06:55:37.000Z"
-  const updatedAt="2024-07-27T06:55:37.000Z"
+// async function insertProducts() {
+//   try {
+//     // Замініть ці дані на ті, які хочете вставити
+//     const title = "Classic Black Hooded Sweatshirt";
+//     const price = 79
+//     const description = "Elevate your casual wardrobe with our Classic Black Hooded Sweatshirt. Made from high-quality, soft fabric that ensures comfort and durability."
+//     const images =[
+//     "https://i.imgur.com/cSytoSD.jpeg",
+//             "https://i.imgur.com/WwKucXb.jpeg",
+//             "https://i.imgur.com/cE2Dxh9.jpeg"
+//   ]
+//   const creationAt="2024-07-27T06:55:37.000Z"
+//   const updatedAt="2024-07-27T06:55:37.000Z"
 
 
-    // Виконання запиту на вставку
-    await sql`
-      INSERT INTO "Products" (title, price, description, images, creationAt, updatedAt)
-      VALUES (${title}, ${price}, ${description}, ${images}, ${creationAt},${updatedAt})
-    `;
-    console.log("Category inserted successfully");
-  } catch (error) {
-    console.error("Error inserting category:", error);
-  }
-}
+//     // Виконання запиту на вставку
+//     await sql`
+//       INSERT INTO "Products" (title, price, description, images, creationAt, updatedAt)
+//       VALUES (${title}, ${price}, ${description}, ${images}, ${creationAt},${updatedAt})
+//     `;
+//     console.log("Category inserted successfully");
+//   } catch (error) {
+//     console.error("Error inserting category:", error);
+//   }
+// }
 
 
 
@@ -111,6 +111,22 @@ async function getAllProducts() {
     return products;
   } catch (error) {
     console.error("Error fetching products:", error);
+    throw error;
+  }
+}
+
+async function getProductById(id) {
+  try {
+    // Виконання запиту на отримання продукту за заданим id
+    const result = await sql`
+      SELECT * FROM "Products" WHERE id = ${id}
+    `;
+
+    // Виведення та повернення продукту
+    const product = result.rows[0];
+    return product;
+  } catch (error) {
+    console.error("Error fetching product:", error);
     throw error;
   }
 }
@@ -308,7 +324,8 @@ async function getAllProducts() {
 
 module.exports = {
   getAllCategories,
-  getAllProducts
+  getAllProducts,
+  getProductById
 //     getProducts,
 //     getProductById,
 //     getCategorytById,
