@@ -23,13 +23,13 @@ const pg =require("pg")
 async function insertProducts() {
   try {
     // Замініть ці дані на ті, які хочете вставити
-    const title = "Classic Heather Gray Hoodie";
-    const price = 69
-    const description = "Stay cozy and stylish with our Classic Heather Gray Hoodie. Crafted from soft, durable fabric, it features a kangaroo pocket"
+    const title = "Classic Black Hooded Sweatshirt";
+    const price = 79
+    const description = "Elevate your casual wardrobe with our Classic Black Hooded Sweatshirt. Made from high-quality, soft fabric that ensures comfort and durability."
     const images =[
-      "https://i.imgur.com/cHddUCu.jpeg",
-      "https://i.imgur.com/CFOjAgK.jpeg",
-      "https://i.imgur.com/wbIMMme.jpeg"
+    "https://i.imgur.com/cSytoSD.jpeg",
+            "https://i.imgur.com/WwKucXb.jpeg",
+            "https://i.imgur.com/cE2Dxh9.jpeg"
   ]
   const creationAt="2024-07-27T06:55:37.000Z"
   const updatedAt="2024-07-27T06:55:37.000Z"
@@ -45,6 +45,7 @@ async function insertProducts() {
     console.error("Error inserting category:", error);
   }
 }
+
 
 
 //   async function insertCategory() {
