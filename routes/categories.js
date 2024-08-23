@@ -1,7 +1,7 @@
 const {Router} = require("express")
 const express=require("express")
 const router=Router()
-const {getAllCategories, getCategorytById, addCategory, updateCategoryById,deleteCategoryById} = require("../db")
+const {getAllCategories, getCategoryById, addCategory, updateCategoryById,deleteCategoryById} = require("../db")
 
 
 /**
@@ -43,7 +43,7 @@ router.get("/categories/:id", async (req, res) => {
     const { id } = req.params;
 
     try {
-        const category = await getCategorytById(id);
+        const category = await getCategoryById(id);
 
         if (!category) {
             return res.status(404).json({ error: "Category not found" });

@@ -103,22 +103,22 @@ router.get("/products/:id", async (req, res) => {
  */
  router.post('/products', async (req, res) => {
     try {
-        const { title, price, description, images, creationAt, updatedAt } = req.body;
-        await addProduct({
-            title,
-            price,
-            description,
-            images,
-            creationAt,
-            updatedAt
-        });
-
-        res.status(201).json({ message: 'Product added successfully' });
+      const { title, price, description, images } = req.body;
+      
+      // Виклик функції для додавання нового продукту
+      const newProduct = await addProduct({
+        title,
+        price,
+        description,
+        images
+      });
+  
+      res.status(201).json(newProduct);
     } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ error: 'Failed to add product' });
+      console.error(error.message);
+      res.status(500).json({ error: 'Failed to add product' });
     }
-});
+  });
 
 //Оновлення поля даних в products
 

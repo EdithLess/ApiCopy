@@ -131,45 +131,21 @@ async function getProductById(id) {
   }
 }
 
-// function getProductById(id) {
-//     return new Promise((resolve, reject) => {
-//         const query = `SELECT * FROM "Products" WHERE id = $1`;
-//         const values = [id];
+async function getCategoryById(id) {
+  try {
+    // Виконання запиту на отримання продукту за заданим id
+    const result = await sql`
+      SELECT * FROM "Categories" WHERE id = ${id}
+    `;
 
-//         pool.query(query, values, (err, res) => {
-//             if (!err) {
-//                 if (res.rows.length > 0) {
-//                     resolve(res.rows[0]);
-//                 } else {
-//                     resolve(null); // Якщо продукт з вказаним id не знайдено
-//                 }
-//             } else {
-//                 console.log(err.message);
-//                 reject(err);
-//             }
-//         });
-//     });
-// }
-
-// function getCategorytById(id) {
-//     return new Promise((resolve, reject) => {
-//         const query = `SELECT * FROM "categories" WHERE id = $1`;
-//         const values = [id];
-
-//         pool.query(query, values, (err, res) => {
-//             if (!err) {
-//                 if (res.rows.length > 0) {
-//                     resolve(res.rows[0]);
-//                 } else {
-//                     resolve(null); // Якщо продукт з вказаним id не знайдено
-//                 }
-//             } else {
-//                 console.log(err.message);
-//                 reject(err);
-//             }
-//         });
-//     });
-// }
+    // Виведення та повернення продукту
+    const category = result.rows[0];
+    return category;
+  } catch (error) {
+    console.error("Error fetching category:", error);
+    throw error;
+  }
+}
 
 // function getUsers() {
 //     return new Promise((resolve, reject) => {
@@ -185,25 +161,25 @@ async function getProductById(id) {
 //     });
 // }
 
-// function addProduct({ title, price, description, images, creationAt, updatedAt }) {
-//     return new Promise((resolve, reject) => {
-//         const query = `
-//             INSERT INTO "Products" (title, price, description, images, "creationAt", "updatedAt")
-//             VALUES ($1, $2, $3, $4, $5, $6)
-//             RETURNING *;
-//         `;
-//         const values = [title, price, description, images, creationAt, updatedAt];
-        
-//         pool.query(query, values, (err, res) => {
-//             if (!err) {
-//                 resolve(res.rows[0]);
-//             } else {
-//                 console.log(err.message);
-//                 reject(err);
-//             }
-//         });
-//     });
-// }
+async function addProduct({ title, price, description, images }) {
+  try {
+    // Додавання нового продукту в базу даних
+    const result = await sql`
+      INSERT INTO "Products" (title, price, description, images, creationAt, updatedAt)
+      VALUES (${title}, ${price}, ${description}, ${images}, NOW(), NOW())
+      RETURNING *;
+    `;
+
+    // Повернення доданого продукту
+    const newProduct = result.rows[0];
+    console.log("Product added successfully:", newProduct);
+    return newProduct;
+  } catch (error) {
+    console.error("Error adding product:", error);
+    throw error;
+  }
+}
+
 
 // function addCategory({ name, image, creationAt, updatedAt }) {
 //     return new Promise((resolve, reject) => {
@@ -325,7 +301,9 @@ async function getProductById(id) {
 module.exports = {
   getAllCategories,
   getAllProducts,
-  getProductById
+  getProductById,
+  getCategoryById,
+  addProduct
 //     getProducts,
 //     getProductById,
 //     getCategorytById,
