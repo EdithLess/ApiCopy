@@ -20,6 +20,22 @@ const pg =require("pg")
 //     }
 //   }
 
+// async function addUsers() {
+//     try {
+//       await sql`
+//         CREATE TABLE IF NOT EXISTS "users" (
+//           id SERIAL PRIMARY KEY,
+//           username VARCHAR(255) NOT NULL,
+//           password VARCHAR(255) NOT NULL,
+//           creationAt TIMESTAMP NOT NULL)`;
+//       console.log("Table created successfully");
+//     } catch (error) {
+//       console.error("Error creating table:", error);
+//     }
+//   }
+
+//   addUsers()
+
 // async function insertProducts() {
 //   try {
 //     // Замініть ці дані на ті, які хочете вставити
@@ -66,7 +82,6 @@ const pg =require("pg")
 //       console.error("Error inserting category:", error);
 //     }
 //   }
-  
 
 // const { Pool } = pg;
 // const pool = new Pool({
@@ -180,26 +195,24 @@ async function addProduct({ title, price, description, images }) {
   }
 }
 
+async function addCategory({ name, image}) {
+  try {
+    // Додавання нового продукту в базу даних
+    const result = await sql`
+      INSERT INTO "Categories" (name, image, creationAt, updatedAt)
+      VALUES (${name}, ${image}, NOW(), NOW())
+      RETURNING *;
+    `;
 
-// function addCategory({ name, image, creationAt, updatedAt }) {
-//     return new Promise((resolve, reject) => {
-//         const query = `
-//             INSERT INTO "categories" (name, image, "creationAt", "updatedAt")
-//             VALUES ($1, $2, $3, $4)
-//             RETURNING *;
-//         `;
-//         const values = [name, image,creationAt, updatedAt ];
-        
-//         pool.query(query, values, (err, res) => {
-//             if (!err) {
-//                 resolve(res.rows[0]);
-//             } else {
-//                 console.log(err.message);
-//                 reject(err);
-//             }
-//         });
-//     });
-// }
+    // Повернення доданого продукту
+    const newCategory = result.rows[0];
+    console.log("Product added successfully:", newCategory);
+    return newCategory;
+  } catch (error) {
+    console.error("Error adding category:", error);
+    throw error;
+  }
+}
 
 // function updateProductById(id, fieldsToUpdate) {
 //     return new Promise((resolve, reject) => {
@@ -303,13 +316,8 @@ module.exports = {
   getAllProducts,
   getProductById,
   getCategoryById,
-  addProduct
-//     getProducts,
-//     getProductById,
-//     getCategorytById,
-//     getUsers,
-//     addProduct,
-//     addCategory,
+  addProduct,
+addCategory
 //     updateProductById,
 //     updateCategoryById,
 //     deleteProductById,
