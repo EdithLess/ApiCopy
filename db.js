@@ -18,22 +18,6 @@ const { sql } = require("@vercel/postgres");
 //     }
 //   }
 
-// async function addUsers() {
-//     try {
-//       await sql`
-//         CREATE TABLE IF NOT EXISTS "users" (
-//           id SERIAL PRIMARY KEY,
-//           username VARCHAR(255) NOT NULL,
-//           password VARCHAR(255) NOT NULL,
-//           creationAt TIMESTAMP NOT NULL)`;
-//       console.log("Table created successfully");
-//     } catch (error) {
-//       console.error("Error creating table:", error);
-//     }
-//   }
-
-//   addUsers()
-
 // async function insertProducts() {
 //   try {
 //     // Замініть ці дані на ті, які хочете вставити
@@ -154,36 +138,6 @@ async function getCategoryById(id) {
   }
 }
 
-// function getUsers() {
-//     return new Promise((resolve, reject) => {
-//         pool.query(`SELECT * FROM "users"`, (err, res) => {
-//             if (!err) {
-//                 const result = res.rows;
-//                 resolve(result);
-//             } else {
-//                 console.log(err.message);
-//                 reject(err);
-//             }
-//         });
-//     });
-// }
-
-async function seedUsers() {
-  try {
-    await sql`
-        CREATE TABLE IF NOT EXISTS "Users" (
-          id SERIAL PRIMARY KEY,
-          username VARCHAR(255) NOT NULL,
-          password VARCHAR(255) NOT NULL,
-          creationAt TIMESTAMP NOT NULL)`;
-    console.log("Table created successfully");
-  } catch (error) {
-    console.error("Error creating table:", error);
-  }
-}
-
-seedUsers();
-
 async function addProduct({ title, price, description, images }) {
   try {
     // Додавання нового продукту в базу даних
@@ -270,27 +224,6 @@ async function updateCategoryById(id, fieldsToUpdate) {
   }
 }
 
-// function deleteProductById(id) {
-//     return new Promise((resolve, reject) => {
-//         const query = `
-//             DELETE FROM "Products"
-//             WHERE id = $1
-//             RETURNING *;
-//         `;
-//         const values = [id];
-
-//         pool.query(query, values, (err, res) => {
-//             if (!err) {
-//                 // Повертаємо видалений продукт, якщо знайдено і видалено
-//                 resolve(res.rows[0]);
-//             } else {
-//                 console.log(err.message);
-//                 reject(err);
-//             }
-//         });
-//     });
-// }
-
 async function deleteProductById(id) {
   try {
     // Виконання SQL-запиту для видалення продукту
@@ -308,27 +241,6 @@ async function deleteProductById(id) {
     throw error;
   }
 }
-
-// function deleteCategoryById(id) {
-//     return new Promise((resolve, reject) => {
-//         const query = `
-//             DELETE FROM "categories"
-//             WHERE id = $1
-//             RETURNING *;
-//         `;
-//         const values = [id];
-
-//         pool.query(query, values, (err, res) => {
-//             if (!err) {
-//                 // Повертаємо видалений продукт, якщо знайдено і видалено
-//                 resolve(res.rows[0]);
-//             } else {
-//                 console.log(err.message);
-//                 reject(err);
-//             }
-//         });
-//     });
-// }
 
 async function deleteCategoryById(id) {
   try {
@@ -348,6 +260,22 @@ async function deleteCategoryById(id) {
   }
 }
 
+async function getUsers() {
+  try {
+    // Виконання SQL-запиту для отримання всіх користувачів
+    const result = await sql`
+      SELECT * FROM "Users"
+    `;
+
+    // Виведення та повернення списку користувачів
+    const users = result.rows;
+    return users;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   getAllCategories,
   getAllProducts,
@@ -359,4 +287,5 @@ module.exports = {
   updateCategoryById,
   deleteProductById,
   deleteCategoryById,
+  getUsers,
 };

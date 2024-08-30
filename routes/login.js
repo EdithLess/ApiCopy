@@ -36,24 +36,38 @@ app.use(express.json());
  */
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
-  const users = await getUsers();
-  const user = users.find((user) => user.nickname === username);
 
-  if (!user || user.password !== password) {
-    return res.status(403).json({ error: "Invalid login" });
+  try {
+    // Виклик функції для отримання всіх користувачів
+    const users = await getUsers();
+
+    // Пошук користувача за його іменем користувача (username)
+    const user = users.find((user) => user.username === username);
+
+    // Перевірка наявності користувача та збігу пароля
+    if (!user || user.password !== password) {
+      return res.status(403).json({ error: "Invalid login" });
+    }
+
+    // Видалення пароля з об'єкта користувача перед відправкою
+    delete user.password;
+
+    // Створення JWT-токена
+    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "1h",
+    });
+
+    // Встановлення токена в cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+    });
+
+    // Повернення інформації про користувача
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("Login error:", error.message);
+    return res.status(500).json({ error: "Failed to log in" });
   }
-
-  delete user.password;
-
-  const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "1h",
-  });
-
-  res.cookie("token", token, {
-    httpOnly: true,
-  });
-
-  return res.status(200).json(user);
 });
 
 /**
