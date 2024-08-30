@@ -1,6 +1,14 @@
-const {Router} = require("express")
-const router=Router()
-const {getAllProducts,getProductById, addProduct, updateProductById,deleteProductById} = require("../db")
+const { Router } = require("express");
+
+const {
+  getAllProducts,
+  getProductById,
+  addProduct,
+  updateProductById,
+  deleteProductById,
+} = require("../db");
+
+const router = Router();
 
 /**
  * @swagger
@@ -27,14 +35,14 @@ const {getAllProducts,getProductById, addProduct, updateProductById,deleteProduc
  *                     type: number
  *                     example: 69.99
  */
-router.get("/products", async (req, res) => {
-    try {
-      const products = await getAllProducts();
-      res.status(200).json(products);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch products" });
-    }
-  });
+router.get("/products", async (_req, res) => {
+  try {
+    const products = await getAllProducts();
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
+});
 
 /**
  * @swagger
@@ -53,23 +61,23 @@ router.get("/products", async (req, res) => {
  *         description: A single product.
  */
 router.get("/products/:id", async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    try {
-        const product = await getProductById(id);
+  try {
+    const product = await getProductById(id);
 
-        if (!product) {
-            return res.status(404).json({ error: "Product not found" });
-        }
-
-        res.status(200).json(product);
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ error: "Failed to retrieve product" });
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
     }
+
+    res.status(200).json(product);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Failed to retrieve product" });
+  }
 });
 
- /**
+/**
  * @swagger
  * /products:
  *   post:
@@ -101,24 +109,24 @@ router.get("/products/:id", async (req, res) => {
  *       201:
  *         description: Продукт успішно додано
  */
- router.post('/products', async (req, res) => {
-    try {
-      const { title, price, description, images } = req.body;
-      
-      // Виклик функції для додавання нового продукту
-      const newProduct = await addProduct({
-        title,
-        price,
-        description,
-        images
-      });
-  
-      res.status(201).json(newProduct);
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).json({ error: 'Failed to add product' });
-    }
-  });
+router.post("/products", async (req, res) => {
+  try {
+    const { title, price, description, images } = req.body;
+
+    // Виклик функції для додавання нового продукту
+    const newProduct = await addProduct({
+      title,
+      price,
+      description,
+      images,
+    });
+
+    res.status(201).json(newProduct);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Failed to add product" });
+  }
+});
 
 //Оновлення поля даних в products
 
@@ -149,23 +157,23 @@ router.get("/products/:id", async (req, res) => {
  *       200:
  *         description: The updated product.
  */
-router.patch('/products/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { body } = req;
+router.patch("/products/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { body } = req;
 
-        const parsedId = parseInt(id);
-        if (isNaN(parsedId)) return res.sendStatus(400); // Перевірка, чи id є числом
+    const parsedId = parseInt(id);
+    if (isNaN(parsedId)) return res.sendStatus(400); // Перевірка, чи id є числом
 
-        const updatedProduct = await updateProductById(parsedId, body); // Виклик функції оновлення продукту
+    const updatedProduct = await updateProductById(parsedId, body); // Виклик функції оновлення продукту
 
-        if (!updatedProduct) return res.sendStatus(404); // Якщо продукт не знайдено, повертаємо 404
+    if (!updatedProduct) return res.sendStatus(404); // Якщо продукт не знайдено, повертаємо 404
 
-        res.status(200).json(updatedProduct); // Повертаємо оновлений продукт
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ error: 'Failed to update product' });
-    }
+    res.status(200).json(updatedProduct); // Повертаємо оновлений продукт
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Failed to update product" });
+  }
 });
 
 //Видалення елементу в products
@@ -185,27 +193,29 @@ router.patch('/products/:id', async (req, res) => {
  *       200:
  *         description: Successfully deleted.
  */
-router.delete('/products/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const parsedId = parseInt(id);
+router.delete("/products/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const parsedId = parseInt(id);
 
-        if (isNaN(parsedId)) {
-            return res.status(400).json({ error: 'Invalid product ID' });
-        }
-
-        const deletedProduct = await deleteProductById(parsedId);
-
-        if (!deletedProduct) {
-            return res.status(404).json({ error: 'Product not found' });
-        }
-
-        return res.status(200).json({ message: 'Product deleted successfully', product: deletedProduct });
-    } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ error: 'Failed to delete product' });
+    if (isNaN(parsedId)) {
+      return res.status(400).json({ error: "Invalid product ID" });
     }
+
+    const deletedProduct = await deleteProductById(parsedId);
+
+    if (!deletedProduct) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    return res.status(200).json({
+      message: "Product deleted successfully",
+      product: deletedProduct,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ error: "Failed to delete product" });
+  }
 });
 
-
-module.exports =router
+module.exports = router;

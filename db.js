@@ -1,7 +1,5 @@
-require("dotenv").config()
-const {sql} =require("@vercel/postgres")
-const pg =require("pg")
-
+require("dotenv").config();
+const { sql } = require("@vercel/postgres");
 
 // async function seedProducts() {
 //     try {
@@ -50,7 +48,6 @@ const pg =require("pg")
 //   const creationAt="2024-07-27T06:55:37.000Z"
 //   const updatedAt="2024-07-27T06:55:37.000Z"
 
-
 //     // Виконання запиту на вставку
 //     await sql`
 //       INSERT INTO "Products" (title, price, description, images, creationAt, updatedAt)
@@ -62,8 +59,6 @@ const pg =require("pg")
 //   }
 // }
 
-
-
 //   async function insertCategory() {
 //     try {
 //       // Замініть ці дані на ті, які хочете вставити
@@ -71,7 +66,7 @@ const pg =require("pg")
 //       const image = "https://example.com/electronics.jpg";
 //       const creationAt = new Date();
 //       const updatedAt = new Date();
-  
+
 //       // Виконання запиту на вставку
 //       await sql`
 //         INSERT INTO "Categories" (name, image, creationAt, updatedAt)
@@ -90,7 +85,7 @@ const pg =require("pg")
 //     port: 5432,
 //     password: "bond007008",
 //     database: "E-shop",
-    
+
 // })
 
 // pool.connect();
@@ -104,14 +99,12 @@ async function getAllCategories() {
 
     // Виведення та повернення лише рядків з результату запиту
     const categories = result.rows;
-    console.log("Categories:", categories);
     return categories;
   } catch (error) {
     console.error("Error fetching categories:", error);
     throw error;
   }
 }
-
 
 async function getAllProducts() {
   try {
@@ -122,7 +115,6 @@ async function getAllProducts() {
 
     // Виведення та повернення лише рядків з результату запиту
     const products = result.rows;
-    console.log("Products:", products);
     return products;
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -187,7 +179,6 @@ async function addProduct({ title, price, description, images }) {
 
     // Повернення доданого продукту
     const newProduct = result.rows[0];
-    console.log("Product added successfully:", newProduct);
     return newProduct;
   } catch (error) {
     console.error("Error adding product:", error);
@@ -195,7 +186,7 @@ async function addProduct({ title, price, description, images }) {
   }
 }
 
-async function addCategory({ name, image}) {
+async function addCategory({ name, image }) {
   try {
     // Додавання нового продукту в базу даних
     const result = await sql`
@@ -206,7 +197,6 @@ async function addCategory({ name, image}) {
 
     // Повернення доданого продукту
     const newCategory = result.rows[0];
-    console.log("Product added successfully:", newCategory);
     return newCategory;
   } catch (error) {
     console.error("Error adding category:", error);
@@ -214,60 +204,55 @@ async function addCategory({ name, image}) {
   }
 }
 
-// function updateProductById(id, fieldsToUpdate) {
-//     return new Promise((resolve, reject) => {
-//         // Динамічно формуємо запит для оновлення на основі полів, які потрібно змінити
-//         const setClause = Object.keys(fieldsToUpdate)
-//             .map((key, index) => `"${key}" = $${index + 2}`)
-//             .join(', ');
+async function updateProductById(id, fieldsToUpdate) {
+  try {
+    const setClause = Object.keys(fieldsToUpdate)
+      .map((key, index) => `"${key}" = $${index + 2}`)
+      .join(", ");
 
-//         const query = `
-//             UPDATE "Products"
-//             SET ${setClause}
-//             WHERE id = $1
-//             RETURNING *;
-//         `;
-//         const values = [id, ...Object.values(fieldsToUpdate)];
+    const query = `
+      UPDATE "Products"
+      SET ${setClause}, "updatedat" = NOW()
+      WHERE id = $1
+      RETURNING *;
+    `;
 
-//         pool.query(query, values, (err, res) => {
-//             if (!err) {
-//                 resolve(res.rows[0]);
-//             } else {
-//                 console.log(err.message);
-//                 reject(err);
-//             }
-//         });
-//     });
-// }
+    const values = [id, ...Object.values(fieldsToUpdate)];
 
-// function updateCategoryById(id, fieldsToUpdate) {
-//     return new Promise((resolve, reject) => {
-//         // Динамічно формуємо запит для оновлення на основі полів, які потрібно змінити
-//         const setClause = Object.keys(fieldsToUpdate)
-//             .map((key, index) => `"${key}" = $${index + 2}`)
-//             .join(', ');
+    const result = await sql.query(query, values);
 
-//         const query = `
-//             UPDATE "categories"
-//             SET ${setClause}
-//             WHERE id = $1
-//             RETURNING *;
-//         `;
-//         const values = [id, ...Object.values(fieldsToUpdate)];
+    const updatedProduct = result.rows[0];
+    return updatedProduct;
+  } catch (error) {
+    console.error("Error updating product:", error);
+    throw error;
+  }
+}
 
-//         pool.query(query, values, (err, res) => {
-//             if (!err) {
-//                 resolve(res.rows[0]);
-//             } else {
-//                 console.log(err.message);
-//                 reject(err);
-//             }
-//         });
-//     });
-// }
+async function updateCategoryById(id, fieldsToUpdate) {
+  try {
+    const setClause = Object.keys(fieldsToUpdate)
+      .map((key, index) => `"${key}" = $${index + 2}`)
+      .join(", ");
 
+    const query = `
+      UPDATE "Categories"
+      SET ${setClause}, "updatedat" = NOW()
+      WHERE id = $1
+      RETURNING *;
+    `;
 
+    const values = [id, ...Object.values(fieldsToUpdate)];
 
+    const result = await sql.query(query, values);
+
+    const updatedCategory = result.rows[0];
+    return updatedCategory;
+  } catch (error) {
+    console.error("Error updating category:", error);
+    throw error;
+  }
+}
 
 // function deleteProductById(id) {
 //     return new Promise((resolve, reject) => {
@@ -289,6 +274,24 @@ async function addCategory({ name, image}) {
 //         });
 //     });
 // }
+
+async function deleteProductById(id) {
+  try {
+    // Виконання SQL-запиту для видалення продукту
+    const result = await sql`
+      DELETE FROM "Products"
+      WHERE id = ${id}
+      RETURNING *;
+    `;
+
+    // Повернення видаленого продукту (якщо такий був)
+    const deletedProduct = result.rows[0];
+    return deletedProduct;
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    throw error;
+  }
+}
 
 // function deleteCategoryById(id) {
 //     return new Promise((resolve, reject) => {
@@ -317,9 +320,9 @@ module.exports = {
   getProductById,
   getCategoryById,
   addProduct,
-addCategory
-//     updateProductById,
-//     updateCategoryById,
-//     deleteProductById,
-//     deleteCategoryById,
+  addCategory,
+  updateProductById,
+  updateCategoryById,
+  deleteProductById,
+  //     deleteCategoryById,
 };

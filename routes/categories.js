@@ -1,8 +1,12 @@
-const {Router} = require("express")
-const express=require("express")
-const router=Router()
-const {getAllCategories, getCategoryById, addCategory, updateCategoryById,deleteCategoryById} = require("../db")
-
+const { Router } = require("express");
+const router = Router();
+const {
+  getAllCategories,
+  getCategoryById,
+  addCategory,
+  updateCategoryById,
+  deleteCategoryById,
+} = require("../db");
 
 /**
  * @swagger
@@ -14,13 +18,13 @@ const {getAllCategories, getCategoryById, addCategory, updateCategoryById,delete
  *         description: A list of categories.
  */
 router.get("/categories", async (req, res) => {
-    try {
-      const categories = await getAllCategories();
-      res.status(200).json(categories);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch categories" });
-    }
-  });
+  try {
+    const categories = await getAllCategories();
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch categories" });
+  }
+});
 
 //Виведення однієї категорії
 /**
@@ -40,23 +44,23 @@ router.get("/categories", async (req, res) => {
  *         description: A single category.
  */
 router.get("/categories/:id", async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    try {
-        const category = await getCategoryById(id);
+  try {
+    const category = await getCategoryById(id);
 
-        if (!category) {
-            return res.status(404).json({ error: "Category not found" });
-        }
-
-        res.status(200).json(category);
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ error: "Failed to retrieve category" });
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
     }
+
+    res.status(200).json(category);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Failed to retrieve category" });
+  }
 });
 
- //Додавання категорій
+//Додавання категорій
 /**
  * @swagger
  * /categories:
@@ -75,22 +79,22 @@ router.get("/categories/:id", async (req, res) => {
  *       200:
  *         description: The created category.
  */
- router.post('/categories', async (req,res)=>{
-    try {
-        const { name, image,creationAt, updatedAt  } = req.body;
-        await addCategory({
-            name,
-            image,
-            creationAt,
-            updatedAt 
-        });
+router.post("/categories", async (req, res) => {
+  try {
+    const { name, image, creationAt, updatedAt } = req.body;
+    await addCategory({
+      name,
+      image,
+      creationAt,
+      updatedAt,
+    });
 
-        res.status(201).json({ message: 'Category added successfully' });
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ error: 'Failed to add product' });
-    }
-})
+    res.status(201).json({ message: "Category added successfully" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Failed to add product" });
+  }
+});
 
 //Оновлення поля даних в categories
 /**
@@ -118,24 +122,24 @@ router.get("/categories/:id", async (req, res) => {
  *       200:
  *         description: The updated category.
  */
-router.patch('/categories/:id',async (req,res)=>{
-    try {
-        const { id } = req.params;
-        const { body } = req;
+router.patch("/categories/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { body } = req;
 
-        const parsedId = parseInt(id);
-        if (isNaN(parsedId)) return res.sendStatus(400); // Перевірка, чи id є числом
+    const parsedId = parseInt(id);
+    if (isNaN(parsedId)) return res.sendStatus(400); // Перевірка, чи id є числом
 
-        const updatedCategory = await updateCategoryById(parsedId, body); // Виклик функції оновлення продукту
+    const updatedCategory = await updateCategoryById(parsedId, body); // Виклик функції оновлення продукту
 
-        if (!updatedCategory) return res.sendStatus(404); // Якщо продукт не знайдено, повертаємо 404
+    if (!updatedCategory) return res.sendStatus(404); // Якщо продукт не знайдено, повертаємо 404
 
-        res.status(200).json(updatedCategory); // Повертаємо оновлений продукт
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ error: 'Failed to update category' });
-    }
-})
+    res.status(200).json(updatedCategory); // Повертаємо оновлений продукт
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Failed to update category" });
+  }
+});
 
 /**
  * @swagger
@@ -153,29 +157,29 @@ router.patch('/categories/:id',async (req,res)=>{
  *       200:
  *         description: Successfully deleted.
  */
-router.delete('/categories/:id',async (req,res)=>{
-    try {
-        const { id } = req.params;
-        const parsedId = parseInt(id);
+router.delete("/categories/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const parsedId = parseInt(id);
 
-        if (isNaN(parsedId)) {
-            return res.status(400).json({ error: 'Invalid product ID' });
-        }
-
-        const deletedCategory = await deleteCategoryById(parsedId);
-
-        if (!deletedCategory) {
-            return res.status(404).json({ error: 'Product not found' });
-        }
-
-        return res.status(200).json({ message: 'Product deleted successfully', category: deletedCategory });
-    } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ error: 'Failed to delete product' });
+    if (isNaN(parsedId)) {
+      return res.status(400).json({ error: "Invalid product ID" });
     }
-})
 
+    const deletedCategory = await deleteCategoryById(parsedId);
 
+    if (!deletedCategory) {
+      return res.status(404).json({ error: "Product not found" });
+    }
 
+    return res.status(200).json({
+      message: "Product deleted successfully",
+      category: deletedCategory,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ error: "Failed to delete product" });
+  }
+});
 
-module.exports =router
+module.exports = router;

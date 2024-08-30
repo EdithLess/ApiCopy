@@ -1,29 +1,33 @@
-require("dotenv").config()
-const PORT = process.env.PORT
+require("dotenv").config();
 
-const productsRouter=require("./routes/products")
-const categoriesRouter=require("./routes/categories")
-const homeRouter=require("./routes/homepage")
-const loginRouter=require("./routes/login")
+const swaggerUi = require("swagger-ui-express");
+const cookieParser = require("cookie-parser");
+const express = require("express");
 
-const express=require("express")
-const app= express()
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./swaggerConfig');
-const cookieParser=require('cookie-parser')
+const productsRouter = require("./routes/products");
+const categoriesRouter = require("./routes/categories");
+const homeRouter = require("./routes/homepage");
+const loginRouter = require("./routes/login");
 
-app.use(express.urlencoded({
-    extended:true
-}))
-app.use(cookieParser())
-app.use(express.json())
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use(productsRouter)
-app.use(categoriesRouter)
-app.use(loginRouter)
-app.use(homeRouter)
+const swaggerSpec = require("./swaggerConfig");
 
+const app = express();
 
-app.listen(PORT,()=>{
-    console.log(`running on port ${PORT}`)
-})
+const PORT = process.env.PORT || 5000;
+
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+app.use(cookieParser());
+app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(productsRouter);
+app.use(categoriesRouter);
+app.use(loginRouter);
+app.use(homeRouter);
+
+app.listen(PORT, () => {
+  console.log(`running on port ${PORT}`);
+});

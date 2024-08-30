@@ -1,8 +1,8 @@
-const {Router} = require("express")
-const router=Router()
+const { Router } = require("express");
+const router = Router();
 
-router.get('/',(req,res)=>{
-    res.send(`<!DOCTYPE html>
+router.get("/", (req, res) => {
+  res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,8 +13,7 @@ router.get('/',(req,res)=>{
     <button> <a href="/products">Products</a></button>
     <button> <a href="/categories">Categories</a></button>
 </body>
-</html>`)
+</html>`);
+});
 
-})
-
-module.exports=router
+module.exports = router;
