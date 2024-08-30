@@ -168,6 +168,22 @@ async function getCategoryById(id) {
 //     });
 // }
 
+async function seedUsers() {
+  try {
+    await sql`
+        CREATE TABLE IF NOT EXISTS "Users" (
+          id SERIAL PRIMARY KEY,
+          username VARCHAR(255) NOT NULL,
+          password VARCHAR(255) NOT NULL,
+          creationAt TIMESTAMP NOT NULL)`;
+    console.log("Table created successfully");
+  } catch (error) {
+    console.error("Error creating table:", error);
+  }
+}
+
+seedUsers();
+
 async function addProduct({ title, price, description, images }) {
   try {
     // Додавання нового продукту в базу даних
@@ -314,6 +330,24 @@ async function deleteProductById(id) {
 //     });
 // }
 
+async function deleteCategoryById(id) {
+  try {
+    // Виконання SQL-запиту для видалення продукту
+    const result = await sql`
+      DELETE FROM "Categories"
+      WHERE id = ${id}
+      RETURNING *;
+    `;
+
+    // Повернення видаленого продукту (якщо такий був)
+    const deletedCategory = result.rows[0];
+    return deletedCategory;
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   getAllCategories,
   getAllProducts,
@@ -324,5 +358,5 @@ module.exports = {
   updateProductById,
   updateCategoryById,
   deleteProductById,
-  //     deleteCategoryById,
+  deleteCategoryById,
 };
