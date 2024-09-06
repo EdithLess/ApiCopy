@@ -1,7 +1,7 @@
 const { Router } = require("express");
+const { getCategoriesPaginated } = require("../categoriesPagination");
 const router = Router();
 const {
-  getAllCategories,
   getCategoryById,
   addCategory,
   updateCategoryById,
@@ -17,10 +17,19 @@ const {
  *       200:
  *         description: A list of categories.
  */
+
+// Маршрут для отримання категорій з пагінацією
 router.get("/categories", async (req, res) => {
+  // Отримання параметра page з запиту, за замовчуванням 0
+  const page = parseInt(req.query.page, 10) || 0;
+  const categoriesPerPage = 5;
+
   try {
-    const categories = await getAllCategories();
-    res.status(200).json(categories);
+    // Виклик функції для отримання категорій з пагінацією
+    const { categories, totalPages, currentPage } =
+      await getCategoriesPaginated(page, categoriesPerPage);
+
+    res.status(200).json({ categories, totalPages, currentPage });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch categories" });
   }

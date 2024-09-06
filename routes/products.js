@@ -1,7 +1,7 @@
 const { Router } = require("express");
+const { getProductsPaginated } = require("../productsPagination");
 
 const {
-  getAllProducts,
   getProductById,
   addProduct,
   updateProductById,
@@ -35,10 +35,19 @@ const router = Router();
  *                     type: number
  *                     example: 69.99
  */
-router.get("/products", async (_req, res) => {
+router.get("/products", async (req, res) => {
+  // Отримання параметра page з запиту, за замовчуванням 0
+  const page = parseInt(req.query.page, 10) || 0;
+  const productsPerPage = 5;
+
   try {
-    const products = await getAllProducts();
-    res.status(200).json(products);
+    // Виклик функції для отримання категорій з пагінацією
+    const { products, totalPages, currentPage } = await getProductsPaginated(
+      page,
+      productsPerPage
+    );
+
+    res.status(200).json({ products, totalPages, currentPage });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch products" });
   }
