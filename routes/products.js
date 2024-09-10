@@ -36,17 +36,15 @@ const router = Router();
  *                     example: 69.99
  */
 router.get("/products", async (req, res) => {
-  // Отримання параметра page з запиту, за замовчуванням 0
-  const page = parseInt(req.query.page, 10) || 0;
-  const productsPerPage = 5;
+  const page = parseInt(req.query.page) || 0;
+  const title = req.query.title || null;
 
   try {
-    // Виклик функції для отримання категорій з пагінацією
     const { products, totalPages, currentPage } = await getProductsPaginated(
       page,
-      productsPerPage
+      10,
+      title
     );
-
     res.status(200).json({ products, totalPages, currentPage });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch products" });

@@ -20,15 +20,12 @@ const {
 
 // Маршрут для отримання категорій з пагінацією
 router.get("/categories", async (req, res) => {
-  // Отримання параметра page з запиту, за замовчуванням 0
-  const page = parseInt(req.query.page, 10) || 0;
-  const categoriesPerPage = 5;
+  const page = parseInt(req.query.page) || 0;
+  const name = req.query.name || null;
 
   try {
-    // Виклик функції для отримання категорій з пагінацією
     const { categories, totalPages, currentPage } =
-      await getCategoriesPaginated(page, categoriesPerPage);
-
+      await getCategoriesPaginated(page, 5, name);
     res.status(200).json({ categories, totalPages, currentPage });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch categories" });
