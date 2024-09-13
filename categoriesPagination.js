@@ -3,41 +3,48 @@ const { sql } = require("@vercel/postgres");
 async function getCategoriesPaginated(
   page = 0,
   categoriesPerPage = 5,
-  name = null
+  filters = {}
 ) {
+  const { name = null, image = null, creationAt = null } = filters;
   const offset = page * categoriesPerPage;
 
   try {
-    let categoriesResult;
-    let countResult;
+    let query = `SELECT * FROM "Categories"`;
+    let countQuery = `SELECT COUNT(*) FROM "Categories"`;
+    let conditions = [];
+    let params = [];
 
     if (name) {
-      // Якщо параметр name існує, фільтруємо категорії за назвою
-      categoriesResult = await sql`
-        SELECT * FROM "Categories"
-        WHERE name ILIKE ${"%" + name + "%"}
-        ORDER BY id
-        LIMIT ${categoriesPerPage}
-        OFFSET ${offset}
-      `;
-
-      countResult = await sql`
-        SELECT COUNT(*) FROM "Categories"
-        WHERE name ILIKE ${"%" + name + "%"}
-      `;
-    } else {
-      // Якщо параметр name відсутній, показуємо всі категорії
-      categoriesResult = await sql`
-        SELECT * FROM "Categories"
-        ORDER BY id
-        LIMIT ${categoriesPerPage}
-        OFFSET ${offset}
-      `;
-
-      countResult = await sql`
-        SELECT COUNT(*) FROM "Categories"
-      `;
+      conditions.push(`name ILIKE $${params.length + 1}`);
+      params.push(`%${name}%`);
     }
+    if (image) {
+      conditions.push(`image ILIKE $${params.length + 1}`);
+      params.push(`%${image}%`);
+    }
+    if (creationAt) {
+      conditions.push(`creationAt::DATE = $${params.length + 1}`);
+      params.push(creationAt.split("T")[0]); // Обрізаємо частину часу
+    }
+
+    if (conditions.length > 0) {
+      query += ` WHERE ${conditions.join(" AND ")}`;
+      countQuery += ` WHERE ${conditions.join(" AND ")}`;
+    }
+
+    query += ` ORDER BY id LIMIT $${params.length + 1} OFFSET $${
+      params.length + 2
+    }`;
+    params.push(categoriesPerPage, offset);
+
+    // console.log("Executing query:", query);
+    // console.log("With parameters:", params);
+
+    const categoriesResult = await sql.query(query, params);
+    const countResult = await sql.query(countQuery, params.slice(0, -2)); // Видаляємо limit і offset
+
+    // console.log("Categories result:", categoriesResult.rows);
+    // console.log("Count result:", countResult.rows);
 
     const categories = categoriesResult.rows;
     const totalCategories = parseInt(countResult.rows[0].count, 10);

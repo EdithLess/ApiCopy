@@ -21,11 +21,17 @@ const {
 // Маршрут для отримання категорій з пагінацією
 router.get("/categories", async (req, res) => {
   const page = parseInt(req.query.page) || 0;
-  const name = req.query.name || null;
+
+  // Збираємо всі можливі фільтри з запиту
+  const filters = {
+    name: req.query.name || null,
+    image: req.query.image || null,
+    creationAt: req.query.creationat || null,
+  };
 
   try {
     const { categories, totalPages, currentPage } =
-      await getCategoriesPaginated(page, 5, name);
+      await getCategoriesPaginated(page, 5, filters);
     res.status(200).json({ categories, totalPages, currentPage });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch categories" });

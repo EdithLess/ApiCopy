@@ -37,13 +37,20 @@ const router = Router();
  */
 router.get("/products", async (req, res) => {
   const page = parseInt(req.query.page) || 0;
-  const title = req.query.title || null;
+
+  // Збираємо всі можливі фільтри з запиту
+  const filters = {
+    title: req.query.title || null,
+    price: req.query.price || null,
+    description: req.query.description || null,
+    creationAt: req.query.creationat || null,
+  };
 
   try {
     const { products, totalPages, currentPage } = await getProductsPaginated(
       page,
-      10,
-      title
+      5,
+      filters
     );
     res.status(200).json({ products, totalPages, currentPage });
   } catch (error) {
