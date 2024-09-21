@@ -24,8 +24,8 @@ async function getProductsPaginated(
       params.push(`%${title}%`);
     }
     if (price) {
-      conditions.push(`price ILIKE $${params.length + 1}`);
-      params.push(`%${price}%`);
+      conditions.push(`price = $${params.length + 1}`);
+      params.push(price);
     }
     if (description) {
       conditions.push(`description ILIKE $${params.length + 1}`);
