@@ -9,7 +9,7 @@ const categoriesRouter = require("./routes/categories");
 const homeRouter = require("./routes/homepage");
 const loginRouter = require("./routes/login");
 
-const swaggerSpec = require("./swaggerConfig");
+const swaggerSpec = require("./source/swaggerConfig");
 
 const app = express();
 
