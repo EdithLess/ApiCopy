@@ -1,12 +1,12 @@
 const { Router } = require("express");
-const { getProductsPaginated } = require("../productsPagination");
+const { getProductsPaginated } = require("../source/productsPagination");
 
 const {
   getProductById,
   addProduct,
   updateProductById,
   deleteProductById,
-} = require("../db");
+} = require("../source/db");
 
 const router = Router();
 

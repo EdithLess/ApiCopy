@@ -1,12 +1,12 @@
 const { Router } = require("express");
-const { getCategoriesPaginated } = require("../categoriesPagination");
+const { getCategoriesPaginated } = require("../source/categoriesPagination");
 const router = Router();
 const {
   getCategoryById,
   addCategory,
   updateCategoryById,
   deleteCategoryById,
-} = require("../db");
+} = require("../source/db");
 
 /**
  * @swagger
