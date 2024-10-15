@@ -110,12 +110,12 @@ router.post("/password", async (req, res) => {
     if (!user || user.password !== password) {
       return res.status(403).json({ error: "Invalid info" });
     }
-    const result = await sql`
+    await sql`
     UPDATE "Users"
     SET "password"=${new_password}
     WHERE password = ${password}
   `;
-    res.status(200).json(result);
+    res.status(200).json(user);
   } catch (error) {
     console.log(error);
   }
