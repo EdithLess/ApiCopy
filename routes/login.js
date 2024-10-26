@@ -115,7 +115,7 @@ router.post("/password", async (req, res) => {
     SET "password"=${new_password}
     WHERE password = ${password}
   `;
-    res.status(200).json(user);
+    res.status(200).json({ message: "New password saved" });
   } catch (error) {
     console.log(error);
   }

@@ -211,7 +211,6 @@ async function updateCategoryById(id, fieldsToUpdate) {
       WHERE id = $1
       RETURNING *;
     `;
-
     const values = [id, ...Object.values(fieldsToUpdate)];
 
     const result = await sql.query(query, values);
