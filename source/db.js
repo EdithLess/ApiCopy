@@ -78,7 +78,7 @@ async function getAllCategories() {
   try {
     // Виконання запиту на отримання всіх рядків з таблиці "Categories"
     const result = await sql`
-      SELECT * FROM "Categories"
+      SELECT * FROM "categories"
     `;
 
     // Виведення та повернення лише рядків з результату запиту
