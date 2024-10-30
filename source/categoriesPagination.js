@@ -9,8 +9,8 @@ async function getCategoriesPaginated(
   const offset = page * categoriesPerPage;
 
   try {
-    let query = `SELECT * FROM "Categories"`;
-    let countQuery = `SELECT COUNT(*) FROM "Categories"`;
+    let query = `SELECT * FROM "categories"`;
+    let countQuery = `SELECT COUNT(*) FROM "categories"`;
     let conditions = [];
     let params = [];
 
@@ -43,7 +43,7 @@ async function getCategoriesPaginated(
     const categoriesResult = await sql.query(query, params);
     const countResult = await sql.query(countQuery, params.slice(0, -2)); // Видаляємо limit і offset
 
-    // console.log("Categories result:", categoriesResult.rows);
+    // console.log("categories result:", categoriesResult.rows);
     // console.log("Count result:", countResult.rows);
 
     const categories = categoriesResult.rows;
