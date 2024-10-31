@@ -53,7 +53,7 @@ const { sql } = require("@vercel/postgres");
 
 //       // Виконання запиту на вставку
 //       await sql`
-//         INSERT INTO "Categories" (name, image, creationAt, updatedAt)
+//         INSERT INTO "categories" (name, image, creationAt, updatedAt)
 //         VALUES (${name}, ${image}, ${creationAt}, ${updatedAt})
 //       `;
 //       console.log("Category inserted successfully");
@@ -76,7 +76,7 @@ const { sql } = require("@vercel/postgres");
 
 async function getAllCategories() {
   try {
-    // Виконання запиту на отримання всіх рядків з таблиці "Categories"
+    // Виконання запиту на отримання всіх рядків з таблиці "categories"
     const result = await sql`
       SELECT * FROM "categories"
     `;
@@ -92,7 +92,7 @@ async function getAllCategories() {
 
 async function getAllProducts() {
   try {
-    // Виконання запиту на отримання всіх рядків з таблиці "Categories"
+    // Виконання запиту на отримання всіх рядків з таблиці "categories"
     const result = await sql`
       SELECT * FROM "Products"
     `;
@@ -126,7 +126,7 @@ async function getCategoryById(id) {
   try {
     // Виконання запиту на отримання продукту за заданим id
     const result = await sql`
-      SELECT * FROM "Categories" WHERE id = ${id}
+      SELECT * FROM "categories" WHERE id = ${id}
     `;
 
     // Виведення та повернення продукту
@@ -160,7 +160,7 @@ async function addCategory({ name, image }) {
   try {
     // Додавання нового продукту в базу даних
     const result = await sql`
-      INSERT INTO "Categories" (name, image, creationAt, updatedAt)
+      INSERT INTO "categories" (name, image, creationAt, updatedAt)
       VALUES (${name}, ${image}, NOW(), NOW())
       RETURNING *;
     `;
@@ -206,7 +206,7 @@ async function updateCategoryById(id, fieldsToUpdate) {
       .join(", ");
 
     const query = `
-      UPDATE "Categories"
+      UPDATE "categories"
       SET ${setClause}, "updatedat" = NOW()
       WHERE id = $1
       RETURNING *;
@@ -245,7 +245,7 @@ async function deleteCategoryById(id) {
   try {
     // Виконання SQL-запиту для видалення продукту
     const result = await sql`
-      DELETE FROM "Categories"
+      DELETE FROM "categories"
       WHERE id = ${id}
       RETURNING *;
     `;
